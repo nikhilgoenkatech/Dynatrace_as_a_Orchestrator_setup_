@@ -128,3 +128,83 @@ def trigger_builderr_workflow():
 # *******************************************************************************
 if __name__ == '__main__':
    app.run(host='0.0.0.0',debug=True)
+   
+# *******************************************************************************
+#           Endpoint accessible from GITEA webhook
+# *******************************************************************************
+@app.route('/trigger_easytrade_workflow',methods = ['POST'])
+def trigger_easytrade_workflow():
+  try:  
+    logger.debug("In trigger_easytrade_workflow")
+
+    payload = request.get_json()
+    logger.debug(payload)
+
+    if request.method == 'POST':
+      clientid = os.getenv("CLIENT_ID")
+      clientsecret = os.getenv("CLIENT_SECRET")
+      api_url = os.getenv("EASYTRADE_WORKFLOW")
+      bearer = getToken(clientid,clientsecret,api_url)
+
+      data = {
+        "input":{
+         "commit_hash":payload["commits"][0]["id"],
+         "user": payload["commits"][0]["committer"]["name"],
+        }
+      }
+
+      headers = {
+         "Authorization": f"Bearer {bearer}",
+      }
+
+      response=trigger_post(api_url, data, headers)
+  except Exception as e:
+    logger.exception("Exception encountered in trigger_easytrade_workflow ", str(e))
+
+  finally:
+    logger.info("Successful completion: trigger_easytrade_workflow")
+    logger.debug("trigger_easytrade_workflow response = %s", response)  
+    if response >= 200 and response <= 399:
+      return json.dumps({'success':True}), response, {'ContentType':'application/json'}
+    else:
+      return json.dumps({'success':False}), response, {'ContentType':'application/json'}
+   
+   # *******************************************************************************
+#           Endpoint accessible from GITEA webhook
+# *******************************************************************************
+@app.route('/trigger_easytrade_builderr_workflow',methods = ['POST'])
+def trigger_builderr_workflow():
+  try:  
+    logger.debug("In trigger_easytrade_builderr_workflow")
+
+    payload = request.get_json()
+    logger.debug(payload)
+
+    if request.method == 'POST':
+      clientid = os.getenv("CLIENT_ID")
+      clientsecret = os.getenv("CLIENT_SECRET")
+      api_url = os.getenv("COMPILATION_ERROR_EASYTRADE_WORKFLOW")
+      bearer = getToken(clientid,clientsecret,api_url)
+
+      data = {
+        "input":{
+         "commit_hash":payload["commits"][0]["id"],
+         "user": payload["commits"][0]["committer"]["name"],
+        }
+      }
+
+      headers = {
+         "Authorization": f"Bearer {bearer}",
+      }
+
+      response=trigger_post(api_url, data, headers)
+  except Exception as e:
+    logger.exception("Exception encountered in trigger_easytrade_builderr_workflow ", str(e))
+
+  finally:
+    logger.info("Successful completion: trigger_easytrade_builderr_workflow")
+    logger.debug("trigger_easytrade_builderr_workflow response = %s", response)  
+    if response >= 200 and response <= 399:
+      return json.dumps({'success':True}), response, {'ContentType':'application/json'}
+    else:
+      return json.dumps({'success':False}), response, {'ContentType':'application/json'}
