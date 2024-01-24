@@ -173,7 +173,7 @@ def trigger_easytrade_workflow():
 #           Endpoint accessible from GITEA webhook
 # *******************************************************************************
 @app.route('/trigger_easytrade_builderr_workflow',methods = ['POST'])
-def trigger_builderr_workflow():
+def trigger_easytrade_builderr_workflow():
   try:  
     logger.debug("In trigger_easytrade_builderr_workflow")
 
