@@ -98,6 +98,7 @@ def trigger_builderr_workflow():
       clientid = os.getenv("CLIENT_ID")
       clientsecret = os.getenv("CLIENT_SECRET")
       api_url = os.getenv("COMPILATION_ERROR_WORKFLOW")
+      sso_auth = os.getenv("SSO_AUTH")
       bearer = getToken(clientid,clientsecret,api_url, sso_auth)
 
       data = {
@@ -144,7 +145,9 @@ def trigger_easytrade_workflow():
       clientid = os.getenv("CLIENT_ID")
       clientsecret = os.getenv("CLIENT_SECRET")
       api_url = os.getenv("EASYTRADE_WORKFLOW")
-      bearer = getToken(clientid,clientsecret,api_url)
+      sso_auth = os.getenv("SSO_AUTH")
+
+      bearer = getToken(clientid,clientsecret,api_url,sso_auth)
 
       data = {
         "input":{
@@ -184,7 +187,9 @@ def trigger_easytrade_builderr_workflow():
       clientid = os.getenv("CLIENT_ID")
       clientsecret = os.getenv("CLIENT_SECRET")
       api_url = os.getenv("COMPILATION_ERROR_EASYTRADE_WORKFLOW")
-      bearer = getToken(clientid,clientsecret,api_url)
+      sso_auth = os.getenv("SSO_AUTH")
+
+      bearer = getToken(clientid,clientsecret,api_url,sso_auth)
 
       data = {
         "input":{
