@@ -4,14 +4,13 @@ import logging
 
 app = Flask(__name__)
 
-SSO_AUTH="https://sso.dynatrace.com/sso/oauth2/token"
 
 logging.basicConfig(level=logging.DEBUG,filename="http_server.log",filemode="w")
 logger = logging.getLogger(__name__)
 # *******************************************************************************
 #           Function to get Bearer Token 
 # *******************************************************************************
-def getToken(clientid, clientsecret, api_url):
+def getToken(clientid, clientsecret, api_url, sso_auth):
   logger.debug("In getToken: ", clientid, " ", clientsecret, " ", api_url)  
   try:
     headers = {
@@ -19,7 +18,7 @@ def getToken(clientid, clientsecret, api_url):
     }
     data = 'grant_type=client_credentials&client_id={}&client_secret={}&scope:app-engine:apps:run,automation:workflows:admin,automation:workflows:run,storage:buckets:read,storage:logs:read'.format(clientid, clientsecret)
 
-    response = requests.post(SSO_AUTH, headers=headers, data=data, verify=False)
+    response = requests.post(sso_auth, headers=headers, data=data, verify=False)
     if response.status_code >= 400 and response.status_code <= 600:
       logger.exception("Get Token failed", str(response.status_code), response.text)
 
@@ -56,8 +55,9 @@ def trigger_workflow():
       api_url = os.getenv("API_URL")
       clientid = os.getenv("CLIENT_ID")
       clientsecret = os.getenv("CLIENT_SECRET")
+      sso_auth = os.getenv("SSO_AUTH")
       logger.debug("client_id=%s",clientid, " client_secret=%s", clientsecret, "api_url=%s",api_url)
-      bearer = getToken(clientid,clientsecret,api_url)
+      bearer = getToken(clientid,clientsecret,api_url, sso_auth)
 
       data = {
         "input":{     
@@ -98,7 +98,7 @@ def trigger_builderr_workflow():
       clientid = os.getenv("CLIENT_ID")
       clientsecret = os.getenv("CLIENT_SECRET")
       api_url = os.getenv("COMPILATION_ERROR_WORKFLOW")
-      bearer = getToken(clientid,clientsecret,api_url)
+      bearer = getToken(clientid,clientsecret,api_url, sso_auth)
 
       data = {
         "input":{
